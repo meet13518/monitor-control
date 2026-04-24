@@ -10,8 +10,9 @@ const shellRef = ref<HTMLDivElement>()
 const videoRef = ref<HTMLVideoElement>()
 const nowText = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 let timerId = 0
-const videoSource = '/videos/cctv.mp4'
-const fallbackSource = 'https://cdn.pixabay.com/video/2023/06/04/165899-833028348_large.mp4'
+const videoSource = `${import.meta.env.BASE_URL}videos/cctv.mp4`
+const fallbackSource = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
+const hasSwitchedToFallback = ref(false)
 
 const enterFullscreen = async () => {
   if (!shellRef.value) return
@@ -23,7 +24,8 @@ const enterFullscreen = async () => {
 }
 
 const onVideoError = () => {
-  if (videoRef.value) {
+  if (videoRef.value && !hasSwitchedToFallback.value) {
+    hasSwitchedToFallback.value = true
     videoRef.value.src = fallbackSource
     videoRef.value.play().catch(() => undefined)
   }
